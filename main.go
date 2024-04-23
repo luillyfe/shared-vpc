@@ -4,15 +4,19 @@ import (
 	"github.com/pulumi/pulumi-gcp/sdk/v7/go/gcp/compute"
 	"github.com/pulumi/pulumi-gcp/sdk/v7/go/gcp/organizations"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config"
 )
 
 func main() {
 	pulumi.Run(func(ctx *pulumi.Context) error {
+		// Config
+		gcpConfig := config.New(ctx, "gcp")
+
 		// Create the host project for the shared VPC
 		hostProject, err := organizations.NewProject(ctx, "hostProject", &organizations.ProjectArgs{
 			Name:      pulumi.String("hostProject"),
-			ProjectId: pulumi.String("your-project-id"),
-			OrgId:     pulumi.String("1234567"),
+			ProjectId: pulumi.String(gcpConfig.Require("projectId")),
+			OrgId:     pulumi.String(gcpConfig.Require("organizationId")),
 		})
 		if err != nil {
 			return err
@@ -29,11 +33,11 @@ func main() {
 		// Create the virtual machine in host project
 		_, err = compute.NewInstance(ctx, "hostVm", &compute.InstanceArgs{
 			Name:        pulumi.String("host-vm"),
-			MachineType: pulumi.String("e2-medium"),
-			Zone:        pulumi.String("us-central1-a"),
+			MachineType: pulumi.String(gcpConfig.Require("hostMachineType")),
+			Zone:        pulumi.String(gcpConfig.Require("zone")),
 			BootDisk: &compute.InstanceBootDiskArgs{
 				InitializeParams: &compute.InstanceBootDiskInitializeParamsArgs{
-					Image: pulumi.String("debian-cloud/debian-9"),
+					Image: pulumi.String(gcpConfig.Require("hostMachineImage")),
 				},
 			},
 			NetworkInterfaces: compute.InstanceNetworkInterfaceArray{
