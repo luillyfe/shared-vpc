@@ -1,0 +1,7 @@
+name: shared-vpc-service1
+runtime: go
+description: Service project 1
+config:
+  service1:machineZone: us-central1-a
+  service1:machineType: e2-medium
+  service1:machineImage: debian-cloud/debian-9

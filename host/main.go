@@ -10,7 +10,7 @@ import (
 func main() {
 	pulumi.Run(func(ctx *pulumi.Context) error {
 		// Config
-		gcpConfig := config.New(ctx, "gcp")
+		gcpConfig := config.New(ctx, "host")
 
 		// Create the host project for the shared VPC
 		hostProject, err := organizations.NewProject(ctx, "hostProject", &organizations.ProjectArgs{
@@ -33,11 +33,11 @@ func main() {
 		// Create the virtual machine in host project
 		_, err = compute.NewInstance(ctx, "hostVm", &compute.InstanceArgs{
 			Name:        pulumi.String("host-vm"),
-			MachineType: pulumi.String(gcpConfig.Require("hostMachineType")),
+			MachineType: pulumi.String(gcpConfig.Require("machineType")),
 			Zone:        pulumi.String(gcpConfig.Require("zone")),
 			BootDisk: &compute.InstanceBootDiskArgs{
 				InitializeParams: &compute.InstanceBootDiskInitializeParamsArgs{
-					Image: pulumi.String(gcpConfig.Require("hostMachineImage")),
+					Image: pulumi.String(gcpConfig.Require("machineImage")),
 				},
 			},
 			NetworkInterfaces: compute.InstanceNetworkInterfaceArray{
@@ -52,18 +52,8 @@ func main() {
 			return err
 		}
 
-		// Create project service1 and resources
-		err = projectService1(ctx, hostProject.ProjectId)
-		if err != nil {
-			return err
-		}
-
-		// Create project service2 and resources
-		err = projectService2(ctx, hostProject.ProjectId)
-		if err != nil {
-			return err
-		}
-
+		// Export the Project ID
+		ctx.Export("hostProjectId", hostProject.ProjectId)
 		return nil
 	})
 }
