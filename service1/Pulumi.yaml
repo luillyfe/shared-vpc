@@ -1,0 +1,7 @@
+name: shared-vpc-service2
+runtime: go
+description: A minimal Google Cloud Go Pulumi program
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: gcp-go

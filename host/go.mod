@@ -1,11 +1,11 @@
-module shared-vpc
+module shared-vpc-host
 
 go 1.21
 
 toolchain go1.21.3
 
 require (
-	github.com/pulumi/pulumi-gcp/sdk/v7 v7.19.0
+	github.com/pulumi/pulumi-gcp/sdk/v7 v7.18.0
 	github.com/pulumi/pulumi/sdk/v3 v3.113.0
 )
 

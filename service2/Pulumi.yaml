@@ -1,0 +1,7 @@
+name: shared-vpc-service1
+runtime: go
+description: Service project 1
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: gcp-go
