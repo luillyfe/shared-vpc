@@ -2,6 +2,12 @@ name: shared-vpc
 runtime: go
 description: A minimal Go Pulumi program
 config:
-  pulumi:tags:
-    value:
-      pulumi:template: go
+  gcp:region: us-central1
+  gcp:zone: us-central1-a
+  gcp:projectId: gen-lang-client-0577805230
+  gcp:organizationId: 123456789
+  gcp:hostMachineType: e2-medium
+  gcp:hostMachineImage: debian-cloud/debian-9
+  gcp:serviceMachineZone: us-central1-a
+  gcp:serviceMachineType: e2-medium
+  gcp:serviceMachineImage: debian-cloud/debian-9
