@@ -54,6 +54,7 @@ func main() {
 
 		// Export the Project ID
 		ctx.Export("hostProjectId", hostProject.ProjectId)
+		ctx.Export("organizationId", hostProject.OrgId)
 		return nil
 	})
 }

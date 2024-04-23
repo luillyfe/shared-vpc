@@ -1,2 +1,8 @@
 config:
   gcp:project: gen-lang-client-0577805230
+  host:region: us-central1
+  host:zone: us-central1-a
+  host:projectId: gen-lang-client-0577805230
+  host:organizationId: 123456789
+  host:machineType: e2-medium
+  host:machineImage: debian-cloud/debian-9

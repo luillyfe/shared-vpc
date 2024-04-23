@@ -10,42 +10,43 @@ import (
 func main() {
 	pulumi.Run(func(ctx *pulumi.Context) error {
 		// Config
-		gcpConfig := config.New(ctx, "gcp")
+		gcpConfig := config.New(ctx, "service2")
+
+		// Stack reference to Host project
+		hostProject, err := pulumi.NewStackReference(ctx, "luillyfe/shared-vpc-host/dev", nil)
+		if err != nil {
+			return err
+		}
+		hostProjectId := hostProject.GetStringOutput(pulumi.String("hostProjectId"))
+		organizationId := hostProject.GetStringOutput(pulumi.String("organizationId"))
 
 		// Create the second service project and attach it to the host project
 		serviceProject2, err := organizations.NewProject(ctx, "serviceProject2", &organizations.ProjectArgs{
 			Name:      pulumi.String("serviceProject2"),
-			ProjectId: pulumi.String(gcpConfig.Require("projectId")),
-			OrgId:     pulumi.String(gcpConfig.Require("organizationId")),
+			ProjectId: hostProjectId,
+			OrgId:     organizationId,
 		})
 		if err != nil {
 			return err
 		}
 
 		_, err = compute.NewSharedVPCServiceProject(ctx, "sharedVPCServiceProject2", &compute.SharedVPCServiceProjectArgs{
-			HostProject:    pulumi.String(gcpConfig.Require("projectId")),
+			HostProject:    hostProjectId,
 			ServiceProject: serviceProject2.ProjectId,
 		})
 		if err != nil {
 			return err
 		}
 
-		// Stack reference to Host project
-		hostProject, err := pulumi.NewStackReference(ctx, "shared-vpc-host", nil)
-		if err != nil {
-			return err
-		}
-		hostProjectId := hostProject.GetOutput(pulumi.String("hostProjectId"))
-
 		// Create a virtual machine in service project 2
 		_, err = compute.NewInstance(ctx, "serviceVm2", &compute.InstanceArgs{
 			Project:     serviceProject2.ProjectId,
 			Name:        pulumi.String("service-vm-2"),
-			MachineType: pulumi.String(gcpConfig.Require("serviceMachineType")),
-			Zone:        pulumi.String(gcpConfig.Require("serviceMachineZone")),
+			MachineType: pulumi.String(gcpConfig.Require("machineType")),
+			Zone:        pulumi.String(gcpConfig.Require("machineZone")),
 			BootDisk: &compute.InstanceBootDiskArgs{
 				InitializeParams: &compute.InstanceBootDiskInitializeParamsArgs{
-					Image: pulumi.String(gcpConfig.Require("serviceMachineImage")),
+					Image: pulumi.String(gcpConfig.Require("machineImage")),
 				},
 			},
 			NetworkInterfaces: compute.InstanceNetworkInterfaceArray{

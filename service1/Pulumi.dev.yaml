@@ -1,2 +1,5 @@
 config:
   gcp:project: gen-lang-client-0577805230
+  service1:machineZone: us-central1-a
+  service1:machineType: e2-medium
+  service1:machineImage: debian-cloud/debian-9
